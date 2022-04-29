@@ -28,6 +28,7 @@ const TeamChannelList = ({ children, error = false, loading, type }) => {
           {" "}
           {type === "team" ? "Channel" : "Direct Messages"}
         </p>
+        {/**button add channel */}
       </div>
       {children}
     </div>
