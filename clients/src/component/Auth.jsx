@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import signInImage from "../assets/signup.jpg";
+const cookies = new Cookies();
 const initialState = {
   fullName: "",
   password: "",
@@ -19,9 +20,29 @@ const Auth = () => {
   const switchMode = () => {
     setIsSignUp((preSignUp) => !preSignUp);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+    const { fullName, username, password, phoneNumber, avatarURL } = form;
+    const URL = "http://localhost:5000/auth";
+    const {
+      data: { token, userId, hashedPassword },
+    } = await axios.post(`${URL}/${isSignUp ? "signup" : "login"}`, {
+      username,
+      fullName,
+      password,
+      phoneNumber,
+      avatarURL,
+    });
+    cookies.set("token", token);
+    cookies.set("username", username);
+    cookies.set("fullName", fullName);
+    cookies.set("userId", userId);
+    if (isSignUp) {
+      cookies.set("phoneNumber", phoneNumber);
+      cookies.set("avatarURL", avatarURL);
+      cookies.set("hashedPassword", hashedPassword);
+    }
+    window.location.reload();
   };
   return (
     <div className="auth__form-container">
@@ -46,7 +67,7 @@ const Auth = () => {
               <label htmlFor="username">UserName</label>
               <input
                 type="text"
-                name="userName"
+                name="username"
                 placeholder="username"
                 onChange={handleChange}
                 required
